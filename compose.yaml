@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" 
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  producter:
+    build:
+      context: ./producter
+    container_name: producter
+    command: python -u producer.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      PYTHONUNBUFFERED: 1
+    depends_on:
+      - rabbitmq
+
+  consumer_color_red:
+    build:
+      context: ./consumer_color
+    container_name: consumer_color_red
+    command: python -u consumer_color.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      COLOR: RED
+      PYTHONUNBUFFERED: 1
+    depends_on:
+      - rabbitmq
+
+  consumer_color_green:
+    build:
+      context: ./consumer_color
+    container_name: consumer_color_green
+    command: python -u consumer_color.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      COLOR: GREEN
+      PYTHONUNBUFFERED: 1
+    depends_on:
+      - rabbitmq
+
+  consumer_color_blue:
+    build:
+      context: ./consumer_color
+    container_name: consumer_color_blue
+    command: python -u consumer_color.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      COLOR: BLUE
+      PYTHONUNBUFFERED: 1
+    depends_on:
+      - rabbitmq
+
+  consumer_statistics:
+    build:
+      context: ./consumer_statistics
+    container_name: consumer_statistics
+    command: python -u consumer_stat.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      PYTHONUNBUFFERED: 1
+    depends_on:
+      - rabbitmq
